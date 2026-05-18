@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=EZmodL
+GenericName=GGUF Model Manager
+Comment=Gestionnaire de modèles GGUF pour llama-swap
+Exec=/home/ia/.ezmodl/ezmodl.sh
+Icon=/home/ia/.ezmodl/icon.png
+Terminal=false
+Categories=Network;Development;Utility;
+StartupNotify=true
+StartupWMClass=WebApp-EZmodL
+Keywords=llm;gguf;huggingface;llama;model;manager;

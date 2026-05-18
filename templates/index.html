@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark-futurist">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EZmodL — Gestionnaire de modèles GGUF</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/icon.png">
+  <link rel="shortcut icon" href="/static/icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/static/icon.png">
+  <link rel="bookmark" href="/static/icon.png">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ═══ Header ═══ -->
+  <header class="app-header">
+    <div class="header-left">
+      <img src="/static/icon.png" alt="EZmodL" class="app-icon">
+      <div>
+        <h1>EZmodL</h1>
+        <p class="subtitle">Gestionnaire de modèles GGUF pour llama-swap</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" id="btn-theme" title="Changer le thème">🎨</button>
+      <button class="btn-icon" id="btn-deps" title="Vérifier dépendances">📦</button>
+      <button class="btn-icon" id="btn-refresh" title="Rafraîchir">🔄</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ═══ Recherche & Import ═══ -->
+    <section class="card" id="section-search">
+      <header class="card-header">
+        <h2>🔍 Recherche & Import</h2>
+        <button class="btn-collapse" data-target="search-content">▼</button>
+      </header>
+      <div class="card-content" id="search-content">
+
+        <!-- Tabs : Recherche / URL direct -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="tab-search">Recherche HF</button>
+          <button class="tab-btn" data-tab="tab-direct">URL / Repo direct</button>
+        </div>
+
+        <!-- Tab : Recherche -->
+        <div class="tab-content active" id="tab-search">
+          <div class="search-controls">
+            <input type="text" id="search-input" placeholder="Ex: Qwen3, DeepSeek, Phi-4..." class="input-text">
+            <button id="btn-search" class="btn-primary">🔍 Chercher</button>
+          </div>
+          <div class="search-filters">
+            <label class="checkbox">
+              <input type="checkbox" id="curators-only" checked>
+              <span>Curators reconnus uniquement</span>
+            </label>
+            <label class="select-label">
+              Tri :
+              <select id="sort-by" class="select">
+                <option value="relevance">Cohérence</option>
+                <option value="likes">Likes</option>
+                <option value="downloads">Téléchargements</option>
+                <option value="trending">Tendance</option>
+                <option value="date">Date</option>
+              </select>
+            </label>
+            <label class="select-label">
+              Limite :
+              <select id="search-limit" class="select">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+              </select>
+            </label>
+          </div>
+          <div id="search-results" class="results-grid"></div>
+        </div>
+
+        <!-- Tab : URL direct -->
+        <div class="tab-content" id="tab-direct">
+          <div class="search-controls">
+            <input type="text" id="direct-input"
+                   placeholder="bartowski/Qwen_Qwen3-14B-GGUF ou URL HF complète"
+                   class="input-text">
+            <button id="btn-direct" class="btn-primary">➡️ Voir quants</button>
+          </div>
+          <p class="hint">Format accepté : <code>owner/repo</code>, <code>owner/repo:QUANT</code>, ou URL HuggingFace.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ Configuration VRAM ═══ -->
+    <section class="card" id="section-vram">
+      <header class="card-header">
+        <h2>⚙️ Configuration VRAM</h2>
+        <button class="btn-collapse" data-target="vram-content">▼</button>
+      </header>
+      <div class="card-content" id="vram-content">
+
+        <div class="vram-status">
+          <div class="vram-item">
+            <span class="label">VRAM totale</span>
+            <span class="value" id="vram-total">--</span>
+          </div>
+          <div class="vram-item">
+            <span class="label">VRAM utilisée</span>
+            <span class="value" id="vram-used">--</span>
+          </div>
+          <div class="vram-item">
+            <span class="label">VRAM libre</span>
+            <span class="value" id="vram-free">--</span>
+          </div>
+        </div>
+
+        <div class="vram-bar-container">
+          <div class="vram-bar" id="vram-bar"></div>
+        </div>
+
+        <div class="vram-config">
+          <label>
+            Cible KV cache (GB) :
+            <input type="number" id="kv-target" min="0.5" max="14" step="0.5" value="3.0" class="input-number">
+          </label>
+          <div class="budget-display">
+            Budget poids modèle : <strong id="budget-gb">--</strong> GB
+          </div>
+          <label class="checkbox">
+            <input type="checkbox" id="save-prefs">
+            <span>Sauvegarder cette config par défaut</span>
+          </label>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ Quants modal (s'affiche après sélection d'un repo) ═══ -->
+    <section class="card hidden" id="section-quants">
+      <header class="card-header">
+        <h2>📦 Quants disponibles</h2>
+        <button class="btn-icon" id="btn-close-quants" title="Fermer">×</button>
+      </header>
+      <div class="card-content">
+        <div class="quants-info">
+          <span>Repo : <strong id="quants-repo">--</strong></span>
+          <span>Budget : <strong id="quants-budget">--</strong> GB</span>
+        </div>
+        <div id="quants-list" class="quants-list"></div>
+        <div class="quants-actions">
+          <button id="btn-queue-selected" class="btn-primary" disabled>⬇️ Ajouter à la queue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Queue & Historique ═══ -->
+    <section class="card" id="section-queue">
+      <header class="card-header">
+        <h2>📋 File d'attente</h2>
+        <button class="btn-collapse" data-target="queue-content">▼</button>
+      </header>
+      <div class="card-content" id="queue-content">
+
+        <div class="queue-current" id="queue-current">
+          <p class="hint-empty">Aucun téléchargement en cours</p>
+        </div>
+
+        <h3>En attente</h3>
+        <div id="queue-pending" class="queue-list">
+          <p class="hint-empty">Queue vide</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ Modèles installés ═══ -->
+    <section class="card" id="section-installed">
+      <header class="card-header">
+        <h2>📂 Modèles installés</h2>
+        <button class="btn-collapse" data-target="installed-content">▼</button>
+      </header>
+      <div class="card-content" id="installed-content">
+        <div id="installed-list" class="installed-list"></div>
+      </div>
+    </section>
+
+    <!-- ═══ Historique ═══ -->
+    <section class="card" id="section-history">
+      <header class="card-header">
+        <h2>📜 Historique</h2>
+        <button class="btn-collapse" data-target="history-content">▼</button>
+      </header>
+      <div class="card-content collapsed" id="history-content">
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ Toast notifications ═══ -->
+  <div id="toast-container"></div>
+
+  <!-- ═══ Modal symlink confirm ═══ -->
+  <div class="modal hidden" id="modal-symlink">
+    <div class="modal-content">
+      <h3>Fichier déjà présent</h3>
+      <p id="modal-symlink-text"></p>
+      <div class="modal-actions">
+        <button id="modal-symlink-yes" class="btn-primary">✅ Oui, symlink</button>
+        <button id="modal-symlink-redownload" class="btn-secondary">⬇️ Re-télécharger</button>
+        <button id="modal-symlink-cancel" class="btn-ghost">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Modal deps status ═══ -->
+  <div class="modal hidden" id="modal-deps">
+    <div class="modal-content">
+      <h3>📦 Dépendances</h3>
+      <div id="modal-deps-list"></div>
+      <div class="modal-actions">
+        <button id="modal-deps-close" class="btn-ghost">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

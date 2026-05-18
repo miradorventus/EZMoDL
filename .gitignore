@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+
+# Logs
+logs/
+*.log
+
+# Local config (généré au runtime)
+config/preferences.json
+queue/pending.json
+queue/current.json
+queue/history.json
+*.bak
+*.bak-*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Tests
+.pytest_cache/
+
+# Builds
+dist/
+build/
+*.tar.gz
+
+# GGUF (gros fichiers)
+*.gguf
