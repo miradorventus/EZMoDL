@@ -25,11 +25,13 @@
 
 ## 📦 Compatibility
 
-Tested on:
+**Tested on:**
 - ✅ Ubuntu 24.04 (noble)
 - ✅ Linux Mint 22.x (xia / wilma / zara)
-- ✅ Debian 13 (trixie) *likely*
-- ✅ Pop!_OS 24.04 *likely*
+
+**Should work, but untested** — same apt base, no reports either way:
+- Debian 13 (trixie)
+- Pop!_OS 24.04
 
 Non-apt distros (Fedora, Arch, openSUSE): system dependencies must be installed manually.
 
@@ -136,7 +138,7 @@ Issues and PRs welcome. This project is deliberately simple and minimal — let'
 
 ## 📜 License
 
-GPL-3.0 — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
 
 ## 🙏 Credits
 
